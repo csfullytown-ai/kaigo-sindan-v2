@@ -318,24 +318,22 @@ body{
       <div class="benefit-grid" id="benefitGrid"></div>
     </div>
 
-    <!-- Hikaru Guidance -->
-    <div class="card guidance" id="guidanceSection">
-      <div class="guidance-title">🌸 ひかるより　申請の順番と、役所での聞き方</div>
-      <div class="guidance-sub">実際に役所を3回まわってわかった、一番スムーズな進め方をお伝えします</div>
-      <div class="hikaru-wrap">
-        <div class="hikaru-icon">👩</div>
-        <div class="hikaru-bubble">
-          <div class="hikaru-name">ひかる（介護補助金アドバイザー・親の介護で7万円を取り戻した経験者）</div>
-          <div id="hikaruIntro"></div>
-        </div>
+    <!-- 申請が終わったら -->
+    <div class="card" id="finalSection" style="display:none;border-left:6px solid #2E7D32">
+      <div style="display:inline-block;background:linear-gradient(135deg,#2E7D32,#43A047);color:#fff;font-size:14px;font-weight:800;padding:5px 16px;border-radius:14px;margin-bottom:14px">申請が終わったら</div>
+      <div style="font-size:20px;font-weight:900;color:#0A3D8F;margin-bottom:10px">ひとつずつ、確実に進めていきましょう</div>
+      <div style="font-size:17px;color:#37474F;line-height:1.9">
+        全部を一日でやろうとしなくて大丈夫です。ひとつずつ、確実に申請していくだけで、積み重なっていきます。<br><br>
+        年収・介護度が変わったとき、同居か別居かが変わったとき、使える制度も変わります。この診断は何度でも使えるので、<strong>状況が変わったらまた診断し直してみてください</strong>。<br><br>
+        「制度を全部知ってる人」なんて最初からいません。でも、聞けば教えてもらえる。一歩踏み出せると、意外とスムーズに進みます。
+        <div class="tip-box" style="margin-top:14px">💡 まず最初の相談は「地域包括支援センター」が一番便利です。何かわからないことがあれば、まずここへ電話してみてください。お住まいの市区町村の窓口で場所を教えてもらえます。</div>
       </div>
-      <div class="step-guides" id="stepGuides"></div>
     </div>
 
     <!-- Life message -->
     <div class="life-msg no-print">
-      <h4>🔄 この診断は、一生使えます</h4>
-      <p>年収・介護度・同居か別居かが変わったとき、<br>使える制度も変わります。<br>状況が変わるたびに、何度でも診断し直してください。<br>介護は長い旅。その時々で使える制度を取りこぼさないために。</p>
+      <h4>🔄 状況が変わったら、また診断してみてください</h4>
+      <p>年収・介護度・同居状況が変わるたびに、使える制度も変わります。<br>そのときどきで、取りこぼしがないか確認してみてください。<br><br><small style="color:#78909C">※ 制度の改正があった場合は、この限りではありません。</small></p>
     </div>
 
     <!-- Print section -->
@@ -612,19 +610,7 @@ function calcResults() {
   const benefits = [];
   let totMin = 0, totMax = 0;
 
-  // ① 要介護認定がまだの場合
-  if (cl === 0) {
-    benefits.push({
-      pr:'ph', name:'要介護認定申請（まず最初に！）',
-      maxAmt:0, amtTxt:'各種サービス・給付金が使えるようになります',
-      desc:'要介護認定を受けていないと、介護保険のサービスはひとつも使えません。まずここから始めることで、このページに出てくるすべての制度が対象になります。申請は市区町村の介護保険課か、地域包括支援センターへ。',
-      where:'市区町村の介護保険課　または　地域包括支援センター', tag:'最優先・無料',
-      speech:'「要介護認定の申請をしたいのですが、申請書をいただけますか。認定調査の流れも教えてください」',
-      tip:'認定調査員が自宅に来て生活の様子を確認します。「いいところを見せよう」としてしまうと、実際より低く認定されることがあります。日頃の状態をそのまま正直に伝えてください。'
-    });
-  }
-
-  // ② 高額介護サービス費
+  // ① 高額介護サービス費
   if (!ex.includes(0) && cl >= 2 && ce >= 1 && ce !== 4) {
     let mn=0,mx=0,at='';
     if (inc===0){mn=72000;mx=180000;at='年間7万〜18万円の還付'}
@@ -730,17 +716,6 @@ function calcResults() {
     totMin+=mn; totMax+=mx;
   }
 
-  // ⑨ 認知症サポート
-  if (dis.includes(0) && ct===0) {
-    benefits.push({
-      pr:'pl', name:'認知症初期集中支援・地域支援事業',
-      maxAmt:0, amtTxt:'専門チームの無料サポート',
-      desc:'認知症の方を在宅介護している場合、「認知症初期集中支援チーム」への無料相談が受けられます。また、地域支援事業の介護予防プログラムや、家族介護者への支援も受けられます。',
-      where:'市区町村の介護保険課　または　地域包括支援センター', tag:'無料のサポート',
-      speech:'「認知症の家族を在宅介護しているのですが、認知症初期集中支援チームに相談できますか？どこに連絡すればいいですか？」',
-      tip:'地域包括支援センターが身近な総合相談窓口です。ケアマネがいれば、ケアマネを通じて紹介してもらうこともできます。'
-    });
-  }
 
   // ⑩ 介護休業給付金（働いている家族へ）
   if (cl>=1 && (hh===0)) {
@@ -803,53 +778,8 @@ function showResults() {
       </div>`).join('');
   }
 
-  // Hikaru intro
-  const inc = answers[3];
-  let intro = '';
-  if (benefits.length === 0) {
-    intro = `診断してみたら、主要な制度はしっかり活用されていましたね。それだけでも、本当によく動いてこられたんだと思います。<br><br>年収・介護度・同居状況が変わったとき、使える制度も変わります。状況が変わったらまたここで診断し直してみてください。`;
-  } else {
-    const moneyMention = totMax > 0 ? `年間で${mxM}万円ほど` : 'いくつかの制度で';
-    intro = `私が役所に行くまで全然知らなかったんですが、介護には「申請しないと戻ってこない」お金がたくさんあって。<br><br>診断してみると、${moneyMention}の取りこぼしが見つかりましたね。<br><br>「どこに行けばいい？」「何て言えばいい？」って、最初は本当にわからなかったんですが、実際に役所を何度も回ってわかった、一番スムーズな順番をお伝えします。`;
-  }
-  document.getElementById('hikaruIntro').innerHTML = intro;
-
-  // Step guides
-  const guidesEl = document.getElementById('stepGuides');
-  if (benefits.length > 0) {
-    let html = '';
-    benefits.forEach((b, idx) => {
-      html += `
-        <div class="sguide">
-          <div class="sguide-num">STEP ${idx+1}　${b.name}</div>
-          <div class="sguide-title">窓口：${b.where}</div>
-          <div class="sguide-body">
-            ${b.desc}
-            ${b.speech ? `
-            <div class="speech">
-              <span class="speech-label">🗣️ 窓口でそのまま使える聞き方</span>
-              <div class="speech-text">${b.speech}</div>
-            </div>` : ''}
-            ${b.tip ? `<div class="tip-box">💡 ${b.tip}</div>` : ''}
-          </div>
-        </div>`;
-    });
-
-    html += `
-      <div class="sguide" style="border-left:4px solid #2E7D32">
-        <div class="sguide-num" style="background:linear-gradient(135deg,#2E7D32,#43A047)">申請が終わったら</div>
-        <div class="sguide-title">ひとつずつ、確実に進めていきましょう</div>
-        <div class="sguide-body">
-          全部を一日でやろうとしなくて大丈夫です。ひとつずつ、確実に申請していくだけで、積み重なっていきます。<br><br>
-          年収・介護度が変わったとき、同居か別居かが変わったとき、使える制度も変わります。この診断は何度でも使えるので、<strong>状況が変わったらまた診断し直してみてください</strong>。<br><br>
-          「制度を全部知ってる人」なんて最初からいません。私も知らないことばかりでした。でも、聞けば教えてもらえる。一歩踏み出せると、意外とスムーズに進みます。
-          <div class="tip-box">💡 まず最初の相談は「地域包括支援センター」が一番便利です。何かわからないことがあれば、まずここへ電話してみてください。お住まいの市区町村の窓口で場所を教えてもらえます。</div>
-        </div>
-      </div>`;
-    guidesEl.innerHTML = html;
-  } else {
-    guidesEl.innerHTML = '';
-  }
+  // 「申請が終わったら」セクションを表示
+  document.getElementById('finalSection').style.display = 'block';
 
   window.scrollTo({top:0, behavior:'smooth'});
 }
